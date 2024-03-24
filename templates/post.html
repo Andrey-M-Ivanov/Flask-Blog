@@ -1,0 +1,114 @@
+{% include "header.html" %}
+{% from 'bootstrap4/form.html' import render_form %}
+
+<!-- Page Header-->
+<header class="masthead" style="background-image: url('{{ post.img_url }}')">
+    <div class="container position-relative px-4 px-lg-5">
+        <div class="row gx-4 gx-lg-5 justify-content-center">
+            <div class="col-md-10 col-lg-8 col-xl-7">
+                <div class="post-heading">
+                    <h1>{{ post.title }}</h1>
+                    <h2 class="subheading">{{ post.subtitle }}</h2>
+                    <span class="meta">
+                        Posted by
+                        <a>{{ post.user.username }}</a>
+                        on {{ post.posted_on }}
+                    </span>
+                </div>
+            </div>
+        </div>
+    </div>
+</header>
+<!-- Post Content-->
+
+<article class="mb-4">
+    <div class="container px-4 px-lg-5">
+        <div class="row gx-4 gx-lg-5 justify-content-center">
+            <div class="col-md-10 col-lg-8 col-xl-9">
+                {{ post.body|safe }}
+            </div>
+        </div>
+            {% if current_user.roles == 'admin' %}
+            <div class="d-flex justify-content-end mb-4">
+                <a class="btn btn-primary text-uppercase" href="{{ url_for('edit_post', post_id=post.id) }}">Edit Post</a>
+            </div>
+            {% endif %}
+    </div>
+</article>
+
+<!--           Comments Area -->
+
+{% if comments|length != 0 %}
+<p class="d-flex justify-content-center mb-4" style="font-size: smaller;"> COMMENTS </p>
+<hr class="my-4" />
+{% endif %}
+
+<div class="container px-4 px-lg-5">
+    <div class="row gx-4 gx-lg-5 justify-content-center">
+        <div class="col-md-10 col-lg-8 col-xl-8">
+
+            {% for comment in comments %}
+            {% if comment.post_id == post.id%}
+            <div class="container px-4 px-lg-5">
+                <img src="{{ url_for('static', filename='assets/uploads/profile_images/'+comment.user.profile_image)}}" style="width:40px;height:40px; border-radius: 50%;" />
+                <span style="font-size: 0.8rem;">{{comment.user.username}} commented on {{comment.posted_on}}
+
+                    {% if current_user.is_authenticated%}
+                    <a href="{{ url_for('add_reply', post_title=post.title, comment_id=comment.id) }}">--->Reply</a>
+                    {% endif %}
+
+                </span>
+                <p>{{ comment.comment_text|safe }}</p>
+
+                    {% if current_user.roles in ["admin", "moderator"] or current_user.id == comment.user.id %}
+                    <a style="font-size: 0.8rem;" href="{{ url_for('edit_comment', comment_id=comment.id, content_type='comment', post_title=post.title) }}">edit comment</a>
+                    {% endif %}
+
+                {% for reply in comment_replies %}
+                {% if reply.comment_id == comment.id %}
+                <div class="container px-4 px-lg-5">
+                    <div class="row gx-4 gx-lg-5">
+                        <div class="col-md-10 col-lg-8 col-xl-12">
+                            <img src="{{ url_for('static', filename='assets/uploads/profile_images/'+reply.user.profile_image)}}" style="width:40px;height:40px; border-radius: 50%;" />
+                            <span style="font-size: 0.8rem;">{{reply.user.username}} replied on {{reply.posted_on}}</span>
+                            <p>{{ reply.reply_text|safe }}</p>
+
+                                {% if current_user.roles in ["admin", "moderator"] or current_user.id == reply.user.id %}
+                                <a style="font-size: 0.8rem;" href="{{ url_for('edit_comment', comment_id=comment.id, content_type='reply', post_title=post.title) }}">edit comment</a>
+                                {% endif %}
+                        </div>
+                    </div>
+                </div>
+                {% endif %}
+                {% endfor %}
+
+            </div>
+            <hr class="my-4" />
+            {% endif %}
+            {% endfor %}
+
+        </div>
+    </div>
+</div>
+
+<!--       Write Comments Area -->
+{% if current_user.is_authenticated%}
+<div class="container px-4 px-lg-5">
+    <div class="row gx-4 gx-lg-5 justify-content-center">
+        <div class="col-md-10 col-lg-8 col-xl-7">
+            {{ ckeditor.load() }}
+            {{ render_form(form, novalidate=True) }}
+        </div>
+    </div>
+</div>
+{% else %}
+<div class="container px-4 px-lg-5">
+    <div class="row gx-4 gx-lg-5 justify-content-center">
+        <div class="col-md-10 col-lg-8 col-xl-7">
+            <p> You must <a href="{{ url_for('register') }}">Register</a> or <a href="{{ url_for('login') }}">Login</a> to comment</p>
+        </div>
+    </div>
+</div>
+{% endif %}
+
+{% include "footer.html" %}

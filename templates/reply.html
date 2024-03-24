@@ -1,0 +1,57 @@
+{% include 'header.html' %}
+{% from 'bootstrap4/form.html' import render_form %}
+
+
+<!-- Page Header-->
+<header class="masthead" style="background-image: url('{{ post.img_url }}')">
+    <div class="container position-relative px-4 px-lg-5">
+        <div class="row gx-4 gx-lg-5 justify-content-center">
+            <div class="col-md-10 col-lg-8 col-xl-7">
+                <div class="post-heading">
+                    <h1>{{ post.title }}</h1>
+                    <h2 class="subheading">{{ post.subtitle }}</h2>
+                    <span class="meta">
+                        Posted by
+                        <a>{{ post.user.username }}</a>
+                        on {{ post.posted_on }}
+                    </span>
+                </div>
+            </div>
+        </div>
+    </div>
+</header>
+
+<div class="container px-4 px-lg-5">
+    <div class="row gx-4 gx-lg-5 justify-content-center">
+        <div class="col-md-10 col-lg-8 col-xl-8">
+            <img src="{{ url_for('static', filename='assets/uploads/profile_images/'+comment.user.profile_image)}}" style="width:40px;height:40px; border-radius: 50%;" />
+            <span style="font-size: 0.8rem;">{{ comment.user.username }} commented on {{ comment.posted_on }}</span>
+            <p>{{ comment.comment_text|safe }}</p>
+
+            {% for reply in comment.comment_replies %}
+                <div class="container px-4 px-lg-5">
+                    <div class="row gx-4 gx-lg-5 justify-content-center">
+                        <div class="col-md-10 col-lg-8 col-xl-12">
+                            <img src="{{ url_for('static', filename='assets/uploads/profile_images/'+reply.user.profile_image)}}" style="width:40px;height:40px; border-radius: 50%;" />
+                            <span style="font-size: 0.8rem;">{{ reply.user.username }} replied on {{ reply.posted_on }}</span>
+                            <p>{{ reply.reply_text|safe }}</p>
+                        </div>
+                    </div>
+                </div>
+            {% endfor%}
+        </div>
+    </div>
+</div>
+
+<hr>
+
+<div class="container px-4 px-lg-5">
+    <div class="row gx-4 gx-lg-5 justify-content-center">
+        <div class="col-md-10 col-lg-8 col-xl-7">
+            {{ ckeditor.load() }}
+            {{ render_form(form)}}
+        </div>
+    </div>
+</div>
+
+{% include 'footer.html' %}

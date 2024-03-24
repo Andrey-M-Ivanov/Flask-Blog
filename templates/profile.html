@@ -1,0 +1,37 @@
+{% include "header.html" %}
+{% from 'bootstrap4/utils.html' import render_messages %}
+{% from 'bootstrap4/form.html' import render_form %}
+
+
+<header class="masthead" style="background-image: url('{{ url_for('static', filename='assets/img/profile-bg.jpg') }}')">
+    <div class="container position-relative px-4 px-lg-5">
+        <div class="row gx-4 gx-lg-5 justify-content-center">
+            <div class="col-md-10 col-lg-8 col-xl-7">
+                <div class="post-heading">
+                    <h1>Welcome {{ current_user.username }} </h1>
+                </div>
+            </div>
+        </div>
+    </div>
+</header>
+
+
+<div class="container position-relative px-4 px-lg-5">
+  <div class="row gx-4 gx-lg-5 justify-content-center">
+    <div class="col-md-12 col-lg-8 col-xl-10" >
+        <div class="offset-md-3 offset-lg-4 offset-xl-5 col-md-6 col-lg-4 col-xl-2 text-center">
+          <img src="{{ url_for('static', filename='assets/uploads/profile_images/'+current_user.profile_image)}}"
+               style="width:150px;height:150px; border-radius: 50%;" class="mb-5" />
+        </div>
+
+        {{ render_messages() }}
+        {{ render_form(information_form, form_type='horizontal')}}
+        <hr>
+        {{ render_form(password_form, form_type='horizontal') }}
+
+    </div>
+  </div>
+</div>
+
+
+{% include "footer.html" %}

@@ -1,0 +1,63 @@
+{% include "header.html" %}
+{% from 'bootstrap4/table.html' import render_table %}
+{% from 'bootstrap4/utils.html' import render_messages %}
+
+
+<header class="masthead" style="background-image: url('{{ url_for('static', filename='assets/img/admin-bg.jpg') }}')">
+    <div class="container position-relative px-4 px-lg-5">
+        <div class="row gx-4 gx-lg-5 justify-content-center">
+            <div class="col-md-10 col-lg-8 col-xl-7">
+                <div class="post-heading">
+                    <h1>HERE ARE THE USERS </h1>
+                </div>
+            </div>
+        </div>
+    </div>
+</header>
+
+
+{{ render_messages(container=True) }}
+
+<div class="container position-relative px-4 px-lg-5">
+    <div class="row gx-4 gx-lg-5 justify-content-center">
+        <div class="col-md-10 col-lg-8 col-xl-10">
+            <div class="table-responsive">
+                <table style="text-align: center;" class="table table-striped">
+                  <thead>
+                      <tr>
+                        <th>Id</th>
+                        <th>Username</th>
+                        <th>Email</th>
+                        <th>Date Joined</th>
+                        <th>Comment Count</th>
+                        <th>Role</th>
+                        <th>Change Role</th>
+                      </tr>
+                  </thead>
+
+                  <tbody>
+                      {% for user in all_users %}
+
+                      <tr style="text-align: center;">
+                        <td>{{ user.id }}</td>
+                        <td>{{ user.username }}</td>
+                        <td>{{ user.email }}</td>
+                        <td>{{ user.date_joined }}</td>
+                        <td>{{ user.comments|length + user.replies|length }}</td>
+                        <td>{{ user.roles }}</td>
+                        <td>
+                            <a href="{{ url_for('change_role', user_id=user.id, new_role='moderator') }}"> Moderator </a>
+                            <a href="{{ url_for('change_role', user_id=user.id, new_role='reader') }}"> Reader </a>
+                        </td>
+                      </tr>
+                      {% endfor %}
+                  </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+{% include "footer.html" %}
